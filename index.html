@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TSI Tiling and Patterns</title>
+    <style>
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f4f4f4;
+}
+
+header {
+    background: linear-gradient(135deg, #2c3e50, #3498db);
+    color: white;
+    padding: 2rem 1rem;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2.5rem;
+}
+
+nav ul {
+    list-style: none;
+    padding: 1rem 0 0 0;
+    margin: 0;
+}
+
+nav ul li {
+    display: inline;
+    margin: 0 1.5rem;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+nav a:hover {
+    color: #ecf0f1;
+}
+
+.hero {
+    background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') no-repeat center center/cover;
+    color: white;
+    text-align: center;
+    padding: 6rem 2rem 4rem;
+    min-height: 500px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: repeating-linear-gradient(
+        45deg,
+        rgba(255,255,255,0.05),
+        rgba(255,255,255,0.05) 10px,
+        transparent 10px,
+        transparent 20px
+    );
+    pointer-events: none;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+    animation: fadeInUp 1s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.hero-content h2 {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    font-weight: 700;
+}
+
+.hero-content p {
+    font-size: 1.3rem;
+    margin-bottom: 2rem;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.btn {
+    display: inline-block;
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: white;
+    padding: 1rem 2rem;
+    text-decoration: none;
+    border-radius: 50px;
+    font-weight: bold;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
+}
+
+.btn:hover::before {
+    left: 100%;
+}
+
+.btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
+}
+
+section {
+    padding: 4rem 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+section h2 {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: #2c3e50;
+    font-size: 2.5rem;
+}
+
+.services-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: center;
+}
+
+.service-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    padding: 2rem;
+    flex: 1 1 300px;
+    text-align: center;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.service-icon {
+    font-size: 3rem;
+    color: #3498db;
+    margin-bottom: 1rem;
+    display: block;
+}
+
+.service-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+}
+
+.service-card h3 {
+    color: #3498db;
+    margin-bottom: 1rem;
+}
+
+.team-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: center;
+}
+
+.team-member {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    padding: 2rem;
+    flex: 1 1 250px;
+    text-align: center;
+    transition: transform 0.3s;
+}
+
+.team-member:hover {
+    transform: translateY(-5px);
+}
+
+.member-photo {
+    width: 100px;
+    height: 100px;
+    background-color: #bdc3c7;
+    border-radius: 50%;
+    margin: 0 auto 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    color: #7f8c8d;
+}
+
+.team-member h3 {
+    margin: 0 0 0.5rem 0;
+    color: #2c3e50;
+}
+
+.role {
+    color: #3498db;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+.contact-info {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    padding: 2rem;
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.portfolio-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: center;
+}
+
+.portfolio-item {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    overflow: hidden;
+    flex: 1 1 300px;
+    text-align: center;
+    transition: transform 0.3s;
+}
+
+.portfolio-item:hover {
+    transform: translateY(-5px);
+}
+
+.portfolio-item img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.portfolio-item p {
+    padding: 1rem;
+    margin: 0;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+.testimonials-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: center;
+}
+
+.testimonial {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    padding: 2rem;
+    flex: 1 1 300px;
+    text-align: center;
+    font-style: italic;
+}
+
+.testimonial cite {
+    display: block;
+    margin-top: 1rem;
+    font-weight: bold;
+    color: #3498db;
+}
+
+.faq-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.faq-item {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    margin-bottom: 1rem;
+    padding: 1.5rem;
+}
+
+.faq-item h3 {
+    margin: 0 0 0.5rem 0;
+    color: #2c3e50;
+}
+
+.faq-item p {
+    margin: 0;
+}
+
+.carousel {
+    position: relative;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    height: 300px;
+    overflow: hidden;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.carousel img {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    animation: fade 16s infinite;
+}
+
+.carousel img:nth-child(1) { animation-delay: 0s; }
+.carousel img:nth-child(2) { animation-delay: 4s; }
+.carousel img:nth-child(3) { animation-delay: 8s; }
+.carousel img:nth-child(4) { animation-delay: 12s; }
+
+@keyframes fade {
+    0%, 24% { opacity: 1; }
+    25%, 100% { opacity: 0; }
+}
+
+footer {
+    background-color: #2c3e50;
+    color: white;
+    padding: 2rem 0;
+    margin-top: 2rem;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.social-links {
+    display: flex;
+    gap: 1rem;
+}
+
+.social-links a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s;
+}
+
+.social-links a:hover {
+    color: #ecf0f1;
+}
+
+@media (max-width: 768px) {
+    .hero-content h2 {
+        font-size: 2rem;
+    }
+    section {
+        padding: 2rem 1rem;
+    }
+    .services-container, .team-container {
+        flex-direction: column;
+    }
+    .footer-content {
+        flex-direction: column;
+        gap: 1rem;
+    }
+}
+    </style>
+</head>
+<body>
+    <header>
+        <h1>TSI Tiling and Patterns</h1>
+        <nav>
+            <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#services">Services</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#team">Team</a></li>
+                <li><a href="#portfolio">Portfolio</a></li>
+                <li><a href="#weekly-updates">Weekly Updates</a></li>
+                <li><a href="#testimonials">Testimonials</a></li>
+                <li><a href="#faq">FAQ</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h2>Welcome to TSI Tiling and Patterns</h2>
+            <p>Your trusted experts in tiling and plumbing solutions. Quality craftsmanship for your home and business.</p>
+            <a href="#contact" class="btn">Get a Quote</a>
+        </div>
+    </section>
+
+    <section id="services">
+        <h2>Our Services</h2>
+        <div class="services-container">
+            <div class="service-card">
+                <span class="service-icon">🔲</span>
+                <h3>Tiling</h3>
+                <p>We offer professional tiling services for floors, walls, and more. From ceramic to natural stone, we handle all types of tiling projects with precision and care.</p>
+            </div>
+            <div class="service-card">
+                <span class="service-icon">🔧</span>
+                <h3>Plumbing</h3>
+                <p>Expert plumbing services including installations, repairs, and maintenance for residential and commercial properties. Reliable solutions for all your plumbing needs.</p>
+            </div>
+            <div class="service-card">
+                <span class="service-icon">🪵</span>
+                <h3>Wooden Flooring and Vinyl</h3>
+                <p>High-quality wooden flooring and vinyl installations. We provide durable, stylish options for any space, ensuring a perfect fit and finish.</p>
+            </div>
+            <div class="service-card">
+                <span class="service-icon">🧱</span>
+                <h3>Building (Brick Layer)</h3>
+                <p>Professional bricklaying services for walls, foundations, and structures. Skilled craftsmanship for residential and commercial building projects.</p>
+            </div>
+            <div class="service-card">
+                <span class="service-icon">🔨</span>
+                <h3>Carpentry</h3>
+                <p>Custom carpentry work including cabinets, shelving, and structural repairs. Expert woodwork to enhance your home or business.</p>
+            </div>
+            <div class="service-card">
+                <span class="service-icon">🎨</span>
+                <h3>Painting</h3>
+                <p>Interior and exterior painting services with premium paints and techniques. Transform your space with our professional painting expertise.</p>
+            </div>
+            <div class="service-card">
+                <span class="service-icon">🚛</span>
+                <h3>Transportation (Rubble and Deliveries) (all goods are insured)</h3>
+                <p>Reliable transportation services for rubble removal and material deliveries. We ensure safe and timely transport for all your construction needs.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="about" style="background: linear-gradient(135deg, #f8f9fa, #e9ecef); border-radius: 10px; margin: 2rem auto; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+        <h2>About Us</h2>
+        <div style="display: flex; flex-wrap: wrap; gap: 2rem; align-items: center;">
+            <div style="flex: 1 1 300px;">
+                <h3>Our Story</h3>
+                <p>Founded in 2010, TSI Tiling and Patterns has been a cornerstone in the construction industry, specializing in high-quality tiling, plumbing, and related services. What started as a small family business has grown into a trusted name in the community, thanks to our commitment to excellence and customer satisfaction.</p>
+                <h3>Our Mission</h3>
+                <p>To provide exceptional craftsmanship and reliable services that transform spaces and exceed our clients' expectations. We believe in building not just structures, but lasting relationships with every project we undertake.</p>
+            </div>
+            <div style="flex: 1 1 300px;">
+                <h3>Why Choose Us?</h3>
+                <ul style="list-style: none; padding: 0;">
+                    <li style="margin-bottom: 0.5rem;"><strong>Expertise:</strong> Over 15 years of combined experience in the field</li>
+                    <li style="margin-bottom: 0.5rem;"><strong>Quality:</strong> Premium materials and meticulous attention to detail</li>
+                    <li style="margin-bottom: 0.5rem;"><strong>Reliability:</strong> On-time delivery and transparent communication</li>
+                    <li style="margin-bottom: 0.5rem;"><strong>Insurance:</strong> Fully insured for your peace of mind</li>
+                    <li style="margin-bottom: 0.5rem;"><strong>Local:</strong> Serving the community with pride</li>
+                </ul>
+            </div>
+        </div>
+        <p style="text-align: center; font-style: italic; margin-top: 2rem; color: #2c3e50;">"Quality craftsmanship, lasting results – that's the TSI promise."</p>
+    </section>
+
+    <section id="team">
+        <h2>Meet Our Team</h2>
+        <div class="team-container">
+            <div class="team-member">
+                <div class="member-photo">[Photo Placeholder]</div>
+                <h3>Thomas</h3>
+                <p class="role">Tiler</p>
+                <p>Expert tiler with years of experience in creating beautiful, durable tile installations for homes and businesses.</p>
+            </div>
+            <div class="team-member">
+                <div class="member-photo">[Photo Placeholder]</div>
+                <h3>Donald</h3>
+                <p class="role">Plumber</p>
+                <p>Certified plumber specializing in efficient repairs, installations, and maintenance of plumbing systems.</p>
+            </div>
+            <div class="team-member">
+                <div class="member-photo">[Photo Placeholder]</div>
+                <h3>Tsietsi Paile</h3>
+                <p class="role">Project Manager</p>
+                <p>Dedicated project manager ensuring all jobs are completed on time, within budget, and to the highest standards.</p>
+            </div>
+            <div class="team-member">
+                <div class="member-photo">[Photo Placeholder]</div>
+                <h3>Mathonsi</h3>
+                <p class="role">Carpenter</p>
+                <p>Skilled carpenter providing custom woodwork, repairs, and installations for residential and commercial projects.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="portfolio">
+        <h2>Our Portfolio</h2>
+        <div class="portfolio-container">
+            <div class="portfolio-item">
+                <img src="https://via.placeholder.com/300x200/3498db/ffffff?text=Tiling+Project" alt="Tiling Project">
+                <p>Kitchen Tiling Renovation</p>
+            </div>
+            <div class="portfolio-item">
+                <img src="https://via.placeholder.com/300x200/e74c3c/ffffff?text=Plumbing+Work" alt="Plumbing Work">
+                <p>Bathroom Plumbing Installation</p>
+            </div>
+            <div class="portfolio-item">
+                <img src="https://via.placeholder.com/300x200/2ecc71/ffffff?text=Flooring" alt="Flooring">
+                <p>Wooden Flooring Installation</p>
+            </div>
+            <div class="portfolio-item">
+                <img src="https://via.placeholder.com/300x200/f39c12/ffffff?text=Carpentry" alt="Carpentry">
+                <p>Custom Carpentry Work</p>
+            </div>
+            <div class="portfolio-item">
+                <img src="https://via.placeholder.com/300x200/9b59b6/ffffff?text=Painting" alt="Painting">
+                <p>Interior Painting Project</p>
+            </div>
+            <div class="portfolio-item">
+                <img src="https://via.placeholder.com/300x200/1abc9c/ffffff?text=Bricklaying" alt="Bricklaying">
+                <p>Bricklaying for New Wall</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="weekly-updates">
+        <h2>Weekly Updates</h2>
+        <div class="carousel">
+            <img src="https://via.placeholder.com/800x300/3498db/ffffff?text=Week+1%3A+Kitchen+Tiling" alt="Weekly Update: Kitchen Tiling">
+            <img src="https://via.placeholder.com/800x300/e74c3c/ffffff?text=Week+2%3A+Plumbing+Repair" alt="Weekly Update: Plumbing Repair">
+            <img src="https://via.placeholder.com/800x300/2ecc71/ffffff?text=Week+3%3A+Flooring+Installation" alt="Weekly Update: Flooring Installation">
+            <img src="https://via.placeholder.com/800x300/f39c12/ffffff?text=Week+4%3A+Carpentry+Work" alt="Weekly Update: Carpentry Work">
+        </div>
+    </section>
+
+    <section id="testimonials">
+        <h2>What Our Clients Say</h2>
+        <div class="testimonials-container">
+            <div class="testimonial">
+                <p>"TSI did an amazing job on our bathroom tiles. Professional, clean, and on time!"</p>
+                <cite>- Sarah M., Homeowner</cite>
+            </div>
+            <div class="testimonial">
+                <p>"Their plumbing work is top-notch. Fixed our leak quickly and affordably."</p>
+                <cite>- John D., Business Owner</cite>
+            </div>
+            <div class="testimonial">
+                <p>"Beautiful wooden flooring installation. Highly recommend for any home project."</p>
+                <cite>- Lisa K., Renovator</cite>
+            </div>
+        </div>
+    </section>
+
+    <section id="faq">
+        <h2>Frequently Asked Questions</h2>
+        <div class="faq-container">
+            <div class="faq-item">
+                <h3>How long does a typical tiling job take?</h3>
+                <p>Most tiling projects take 1-3 days depending on the size and complexity.</p>
+            </div>
+            <div class="faq-item">
+                <h3>Do you provide warranties on your work?</h3>
+                <p>Yes, we offer warranties on materials and workmanship for up to 1 year.</p>
+            </div>
+            <div class="faq-item">
+                <h3>Can you work on commercial properties?</h3>
+                <p>Absolutely! We handle both residential and commercial projects.</p>
+            </div>
+            <div class="faq-item">
+                <h3>What areas do you service?</h3>
+                <p>We serve the local area and surrounding regions. Contact us for details.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact">
+        <h2>Contact Us</h2>
+        <p>Get in touch for a quote or to discuss your project. We're here to help!</p>
+        <div class="contact-info">
+            <p><strong>Email:</strong> info@tsitiling.com</p>
+            <p><strong>Phone:</strong> 065 583 0779</p>
+            <p><strong>Address:</strong> 123 Main St, City, State, ZIP</p>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2026 TSI Tiling and Patterns. All rights reserved.</p>
+            <div class="social-links">
+                <a href="#" aria-label="Facebook">Facebook</a>
+                <a href="#" aria-label="Instagram">Instagram</a>
+                <a href="#" aria-label="LinkedIn">LinkedIn</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="assets/script.js"></script>
+</body>
+</html>
