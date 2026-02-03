@@ -1,557 +1,743 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TSI Tiling and Patterns</title>
     <style>
-html {
-    scroll-behavior: smooth;
-}
+        html {
+            scroll-behavior: smooth;
+        }
 
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 0;
-    padding: 0;
-    line-height: 1.6;
-    color: #333;
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-}
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
 
-/* Add floating elements animation */
-@keyframes float {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-10px); }
-}
+        /* Add floating elements animation */
+        @keyframes float {
 
-.floating { animation: float 3s ease-in-out infinite; }
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
 
-header {
-    background: linear-gradient(135deg, #2c3e50, #3498db);
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .floating {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        header {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            padding: 1rem 2rem;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        header.scrolled {
+            padding: 0.5rem 2rem;
+            background: rgba(44, 62, 80, 0.95);
+            backdrop-filter: blur(10px);
+        }
+
+        body {
+            padding-top: 120px;
+            /* Account for fixed header */
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .hamburger {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.8rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1001;
+        }
+
+        .hamburger:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: scale(1.05);
+        }
+
+        .hamburger span {
+            display: block;
+            width: 28px;
+            height: 3px;
+            background: white;
+            margin: 6px 0;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            border-radius: 2px;
+            transform-origin: center;
+        }
+
+        .hamburger.active {
+            background: rgba(231, 76, 60, 0.2);
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(9px, 9px);
+            background: #e74c3c;
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+            transform: scale(0);
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(9px, -9px);
+            background: #e74c3c;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            gap: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        nav ul li {
+            margin: 0;
+        }
+
+        nav ul.mobile-menu {
+            position: fixed;
+            top: 80px;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            flex-direction: column;
+            padding: 0;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            backdrop-filter: blur(10px);
+            border-bottom: 3px solid #3498db;
+        }
+
+        nav ul.mobile-menu.active {
+            max-height: 500px;
+            opacity: 1;
+            padding: 1rem 0;
+        }
+
+        nav ul.mobile-menu li {
+            margin: 0;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        nav ul.mobile-menu li:last-child {
+            border-bottom: none;
+        }
+
+        nav ul.mobile-menu li a {
+            display: block;
+            padding: 1rem 2rem;
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        nav ul.mobile-menu li a:hover {
+            background: rgba(52, 152, 219, 0.2);
+            color: #3498db;
+            padding-left: 2.5rem;
+        }
+
+        nav ul.mobile-menu li a:before {
+            content: '→';
+            position: absolute;
+            left: 1rem;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        nav ul.mobile-menu li a:hover:before {
+            opacity: 1;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #ecf0f1;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, rgba(44, 62, 80, 0.8), rgba(52, 152, 219, 0.6)), url('assets/img/OIP.webp') no-repeat center center/cover;
+            color: white;
+            text-align: center;
+            padding: 6rem 2rem 4rem;
+            min-height: 450px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: repeating-linear-gradient(45deg,
+                    rgba(255, 255, 255, 0.02),
+                    rgba(255, 255, 255, 0.02) 15px,
+                    transparent 15px,
+                    transparent 30px);
+            pointer-events: none;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 100px;
+            background: linear-gradient(to top, rgba(244, 244, 244, 0.1), transparent);
+            pointer-events: none;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-content h2 {
+            font-size: 3.2rem;
+            margin-bottom: 1.5rem;
+            text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.7), 1px 1px 2px rgba(0, 0, 0, 0.5);
+            font-weight: 700;
+            letter-spacing: 1px;
+            line-height: 1.1;
+        }
+
+        .hero-content p {
+            font-size: 1.4rem;
+            margin-bottom: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+            font-weight: 300;
+            opacity: 0.95;
+        }
+
+        .btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            padding: 1rem 2rem;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
+        }
+
+        section {
+            padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        section h2 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: #2c3e50;
+            font-size: 2.5rem;
+        }
+
+        .services-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: center;
+        }
+
+        .service-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            flex: 1 1 300px;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .service-icon {
+            font-size: 3rem;
+            color: #3498db;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .service-card h3 {
+            color: #3498db;
+            margin-bottom: 1rem;
+        }
+
+        .team-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: center;
+        }
+
+        .team-member {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            flex: 1 1 250px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .team-member:hover {
+            transform: translateY(-5px);
+        }
+
+        .member-photo {
+            width: 100px;
+            height: 100px;
+            background-color: #bdc3c7;
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            color: #7f8c8d;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        .member-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+        }
+
+        .team-member:hover .member-photo {
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+            transform: scale(1.05);
+        }
+
+        .team-member:hover .member-photo img {
+            transform: scale(1.1);
+        }
+
+/* Ratings and Comments Section */
+.ratings-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    padding: 1rem 2rem;
-    text-align: center;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 1000;
-    transition: all 0.3s ease;
-}
-
-header.scrolled {
-    padding: 0.5rem 2rem;
-    background: rgba(44,62,80,0.95);
-    backdrop-filter: blur(10px);
-}
-
-body {
-    padding-top: 120px; /* Account for fixed header */
-}
-
-header h1 {
-    margin: 0;
-    font-size: 2.5rem;
-}
-
-.nav-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-.hamburger {
-    display: none;
-    background: none;
-    border: none;
-    color: white;
-    font-size: 1.5rem;
-    cursor: pointer;
-    padding: 0.5rem;
-    border-radius: 4px;
-    transition: background 0.3s ease;
-}
-
-.hamburger:hover {
-    background: rgba(255,255,255,0.1);
-}
-
-.hamburger span {
-    display: block;
-    width: 25px;
-    height: 3px;
-    background: white;
-    margin: 5px 0;
-    transition: 0.3s;
-    border-radius: 2px;
-}
-
-.hamburger.active span:nth-child(1) {
-    transform: rotate(45deg) translate(5px, 5px);
-}
-
-.hamburger.active span:nth-child(2) {
-    opacity: 0;
-}
-
-.hamburger.active span:nth-child(3) {
-    transform: rotate(-45deg) translate(7px, -6px);
-}
-
-nav ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    gap: 2rem;
-    transition: all 0.3s ease;
-}
-
-nav ul li {
-    margin: 0;
-}
-
-nav ul.mobile-menu {
-    position: fixed;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background: linear-gradient(135deg, #2c3e50, #3498db);
-    flex-direction: column;
-    padding: 2rem;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-    transform: translateY(-100%);
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.3s ease;
-}
-
-nav ul.mobile-menu.active {
-    transform: translateY(0);
-    opacity: 1;
-    visibility: visible;
-}
-
-nav ul.mobile-menu li {
-    margin: 1rem 0;
-    text-align: center;
-}
-
-nav a {
-    color: white;
-    text-decoration: none;
-    font-weight: 500;
-    transition: color 0.3s;
-}
-
-nav a:hover {
-    color: #ecf0f1;
-}
-
-.hero {
-    background: linear-gradient(135deg, rgba(44,62,80,0.8), rgba(52,152,219,0.6)), url('assets/img/OIP.webp') no-repeat center center/cover;
-    color: white;
-    text-align: center;
-    padding: 6rem 2rem 4rem;
-    min-height: 450px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    overflow: hidden;
-    box-shadow: inset 0 0 100px rgba(0,0,0,0.3);
-}
-
-.hero::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: repeating-linear-gradient(
-        45deg,
-        rgba(255,255,255,0.02),
-        rgba(255,255,255,0.02) 15px,
-        transparent 15px,
-        transparent 30px
-    );
-    pointer-events: none;
-}
-
-.hero::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 100px;
-    background: linear-gradient(to top, rgba(244,244,244,0.1), transparent);
-    pointer-events: none;
-}
-
-.hero-content {
-    position: relative;
-    z-index: 1;
-    animation: fadeInUp 1s ease-out;
-}
-
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.hero-content h2 {
-    font-size: 3.2rem;
-    margin-bottom: 1.5rem;
-    text-shadow: 3px 3px 8px rgba(0,0,0,0.7), 1px 1px 2px rgba(0,0,0,0.5);
-    font-weight: 700;
-    letter-spacing: 1px;
-    line-height: 1.1;
-}
-
-.hero-content p {
-    font-size: 1.4rem;
-    margin-bottom: 2.5rem;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.6);
-    max-width: 700px;
-    margin-left: auto;
-    margin-right: auto;
-    line-height: 1.6;
-    font-weight: 300;
-    opacity: 0.95;
-}
-
-.btn {
-    display: inline-block;
-    background: linear-gradient(135deg, #e74c3c, #c0392b);
-    color: white;
-    padding: 1rem 2rem;
-    text-decoration: none;
-    border-radius: 50px;
-    font-weight: bold;
-    font-size: 1.1rem;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
-    position: relative;
-    overflow: hidden;
-}
-
-.btn::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-    transition: left 0.5s;
-}
-
-.btn:hover::before {
-    left: 100%;
-}
-
-.btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
-}
-
-section {
     padding: 4rem 2rem;
+    text-align: center;
+}
+
+.ratings-container {
     max-width: 1200px;
     margin: 0 auto;
-}
-
-section h2 {
-    text-align: center;
-    margin-bottom: 2rem;
-    color: #2c3e50;
-    font-size: 2.5rem;
-}
-
-.services-container {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 2rem;
-    justify-content: center;
-}
-
-.service-card {
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    padding: 2rem;
-    flex: 1 1 300px;
-    text-align: center;
-    transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.service-icon {
-    font-size: 3rem;
-    color: #3498db;
-    margin-bottom: 1rem;
-    display: block;
-}
-
-.service-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 15px rgba(0,0,0,0.2);
-}
-
-.service-card h3 {
-    color: #3498db;
-    margin-bottom: 1rem;
-}
-
-.team-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 2rem;
-    justify-content: center;
-}
-
-.team-member {
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    padding: 2rem;
-    flex: 1 1 250px;
-    text-align: center;
-    transition: transform 0.3s;
-}
-
-.team-member:hover {
-    transform: translateY(-5px);
-}
-
-.member-photo {
-    width: 100px;
-    height: 100px;
-    background-color: #bdc3c7;
-    border-radius: 50%;
-    margin: 0 auto 1rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.8rem;
-    color: #7f8c8d;
-}
-
-.team-member h3 {
-    margin: 0 0 0.5rem 0;
-    color: #2c3e50;
-}
-
-.role {
-    color: #3498db;
-    font-weight: bold;
-    margin-bottom: 1rem;
-}
-
-.contact-info {
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    padding: 2rem;
-    max-width: 600px;
-    margin: 0 auto;
-    text-align: center;
-}
-
-.portfolio-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 2rem;
-    justify-content: center;
-}
-
-.portfolio-item {
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    overflow: hidden;
-    flex: 1 1 300px;
-    text-align: center;
-    transition: transform 0.3s;
-}
-
-.portfolio-item:hover {
-    transform: translateY(-5px);
-}
-
-.portfolio-item img {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-}
-
-.portfolio-item p {
-    padding: 1rem;
-    margin: 0;
-    font-weight: bold;
-    color: #2c3e50;
-}
-
-.testimonials-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 2rem;
-    justify-content: center;
-}
-
-.testimonial {
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    padding: 2rem;
-    flex: 1 1 300px;
-    text-align: center;
-    font-style: italic;
-}
-
-.testimonial cite {
-    display: block;
-    margin-top: 1rem;
-    font-weight: bold;
-    color: #3498db;
-}
-
-.faq-container {
-    max-width: 800px;
-    margin: 0 auto;
-}
-
-.faq-item {
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    margin-bottom: 1rem;
-    padding: 1.5rem;
-}
-
-.faq-item h3 {
-    margin: 0 0 0.5rem 0;
-    color: #2c3e50;
-}
-
-.faq-item p {
-    margin: 0;
-}
-
-.carousel {
-    position: relative;
-    width: 100%;
-    max-width: 800px;
-    margin: 0 auto;
-    height: 300px;
-    overflow: hidden;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-}
-
-.carousel img {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    opacity: 0;
-    animation: fade 16s infinite;
-}
-
-.carousel img:nth-child(1) { animation-delay: 0s; }
-.carousel img:nth-child(2) { animation-delay: 4s; }
-.carousel img:nth-child(3) { animation-delay: 8s; }
-.carousel img:nth-child(4) { animation-delay: 12s; }
-
-@keyframes fade {
-    0%, 24% { opacity: 1; }
-    25%, 100% { opacity: 0; }
-}
-
-footer {
-    background-color: #2c3e50;
-    color: white;
-    padding: 2rem 0;
     margin-top: 2rem;
 }
 
-.footer-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 2rem;
+.rating-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 2rem;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255,255,255,0.2);
 }
 
-.social-links {
-    display: flex;
-    gap: 1rem;
+.rating-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+    background: rgba(255, 255, 255, 0.15);
 }
 
-.social-links a {
-    color: white;
-    text-decoration: none;
+.star-rating {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+}
+
+.star {
+    color: #ffd700;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+}
+
+.rating-card h3 {
+    margin-bottom: 1rem;
+    color: #ffffff;
+    font-size: 1.3rem;
+}
+
+.rating-card p {
+    font-style: italic;
+    margin-bottom: 1rem;
+    line-height: 1.6;
+    color: rgba(255,255,255,0.9);
+}
+
+.rating-author {
     font-weight: bold;
-    transition: color 0.3s;
+    font-size: 0.9rem;
+    color: #ffd700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
-.social-links a:hover {
-    color: #ecf0f1;
+.overall-rating {
+    text-align: center;
+    margin-bottom: 2rem;
 }
 
-@media (max-width: 768px) {
-    .hero-content h2 {
-        font-size: 2rem;
-    }
-    section {
-        padding: 2rem 1rem;
-    }
-    .services-container, .team-container {
-        flex-direction: column;
-    }
-    .footer-content {
-        flex-direction: column;
-        gap: 1rem;
-    }
-    
-    /* Mobile Navigation */
-    .hamburger {
-        display: block;
-    }
-    
-    nav ul:not(.mobile-menu) {
-        display: none;
-    }
-    
-    header h1 {
-        font-size: 1.8rem;
-    }
-    
-    .nav-container {
-        text-align: left;
-    }
-    
-    body {
-        padding-top: 90px;
-    }
-    
-    header {
-        padding: 0.8rem 1rem;
-    }
+.overall-rating h3 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    color: #ffd700;
 }
+
+.overall-stars {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.rating-summary {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+            color: #2c3e50;
+        }
+
+        .role {
+            color: #3498db;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .contact-info {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .portfolio-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: center;
+        }
+
+        .portfolio-item {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            flex: 1 1 300px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .portfolio-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .portfolio-item img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .portfolio-item p {
+            padding: 1rem;
+            margin: 0;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .faq-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1rem;
+            padding: 1.5rem;
+        }
+
+        .faq-item h3 {
+            margin: 0 0 0.5rem 0;
+            color: #2c3e50;
+        }
+
+        .faq-item p {
+            margin: 0;
+        }
+
+        .carousel {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            height: 300px;
+            overflow: hidden;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .carousel img {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            animation: fade 16s infinite;
+        }
+
+        .carousel img:nth-child(1) {
+            animation-delay: 0s;
+        }
+
+        .carousel img:nth-child(2) {
+            animation-delay: 4s;
+        }
+
+        .carousel img:nth-child(3) {
+            animation-delay: 8s;
+        }
+
+        .carousel img:nth-child(4) {
+            animation-delay: 12s;
+        }
+
+        @keyframes fade {
+
+            0%,
+            24% {
+                opacity: 1;
+            }
+
+            25%,
+            100% {
+                opacity: 0;
+            }
+        }
+
+        footer {
+            background-color: #2c3e50;
+            color: white;
+            padding: 2rem 0;
+            margin-top: 2rem;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+
+        .social-links a:hover {
+            color: #ecf0f1;
+        }
+
+        /* Mobile menu overlay */
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+
+        .menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        @media (max-width: 768px) {
+            .hero-content h2 {
+                font-size: 2rem;
+            }
+
+            section {
+                padding: 2rem 1rem;
+            }
+
+            .services-container,
+            .team-container {
+                flex-direction: column;
+            }
+
+            .footer-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            /* Mobile Navigation */
+            .hamburger {
+                display: block;
+            }
+
+            nav ul:not(.mobile-menu) {
+                display: none;
+            }
+
+            header h1 {
+                font-size: 1.8rem;
+            }
+
+            .nav-container {
+                text-align: left;
+            }
+
+            body {
+                padding-top: 80px;
+            }
+
+            header {
+                padding: 0.8rem 1rem;
+            }
+
+            /* Prevent body scroll when menu is open */
+            body.menu-open {
+                overflow: hidden;
+            }
+        }
     </style>
 </head>
+
 <body>
     <header>
         <div class="nav-container">
@@ -568,19 +754,8 @@ footer {
                     <li><a href="#about">About</a></li>
                     <li><a href="#team">Team</a></li>
                     <li><a href="#portfolio">Portfolio</a></li>
+                    <li><a href="#ratings">Ratings</a></li>
                     <li><a href="#weekly-updates">Weekly Updates</a></li>
-                    <li><a href="#testimonials">Testimonials</a></li>
-                    <li><a href="#faq">FAQ</a></li>
-                    <li><a href="#contact">Contact</a></li>
-                </ul>
-                <ul class="mobile-menu" id="mobileMenu">
-                    <li><a href="#home">Home</a></li>
-                    <li><a href="#services">Services</a></li>
-                    <li><a href="#about">About</a></li>
-                    <li><a href="#team">Team</a></li>
-                    <li><a href="#portfolio">Portfolio</a></li>
-                    <li><a href="#weekly-updates">Weekly Updates</a></li>
-                    <li><a href="#testimonials">Testimonials</a></li>
                     <li><a href="#faq">FAQ</a></li>
                     <li><a href="#contact">Contact</a></li>
                 </ul>
@@ -588,21 +763,41 @@ footer {
         </div>
     </header>
 
+    <div class="menu-overlay" id="menuOverlay"></div>
+    <nav>
+        <ul class="mobile-menu" id="mobileMenu">
+            <li><a href="#home">🏠 Home</a></li>
+            <li><a href="#services">🔧 Services</a></li>
+            <li><a href="#about">ℹ️ About</a></li>
+            <li><a href="#team">👥 Team</a></li>
+            <li><a href="#portfolio">📸 Portfolio</a></li>
+            <li><a href="#ratings">⭐ Ratings</a></li>
+            <li><a href="#weekly-updates">📅 Weekly Updates</a></li>
+            <li><a href="#faq">❓ FAQ</a></li>
+            <li><a href="#contact">📞 Contact</a></li>
+        </ul>
+    </nav>
+
     <section id="home" class="hero">
         <div class="hero-content">
             <h2>Transform Your Space with Expert Craftsmanship</h2>
-            <p><strong>15+ Years of Excellence</strong> | <strong>1000+ Happy Customers</strong> | <strong>100% Satisfaction Guaranteed</strong></p>
-            <p>From stunning tile installations to reliable plumbing solutions - we deliver quality that lasts a lifetime.</p>
+            <p><strong>15+ Years of Excellence</strong> | <strong>1000+ Happy Customers</strong> | <strong>100%
+                    Satisfaction Guaranteed</strong></p>
+            <p>From stunning tile installations to reliable plumbing solutions - we deliver quality that lasts a
+                lifetime.</p>
             <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-top: 2rem;">
                 <a href="#contact" class="btn">Get FREE Quote Today</a>
-                <a href="tel:0655830779" class="btn" style="background: linear-gradient(135deg, #2ecc71, #27ae60);">📞 Call Now: 065 583 0779</a>
+                <a href="tel:0655830779" class="btn" style="background: linear-gradient(135deg, #2ecc71, #27ae60);">📞
+                    Call Now: 065 583 0779</a>
             </div>
-            <p style="font-size: 0.9rem; margin-top: 1rem; opacity: 0.9;">⚡ Emergency Services Available | 🛡️ Fully Licensed & Insured | 💯 Lifetime Warranty</p>
+            <p style="font-size: 0.9rem; margin-top: 1rem; opacity: 0.9;">⚡ Emergency Services Available | 🛡️ Fully
+                Licensed & Insured | 💯 Lifetime Warranty</p>
         </div>
     </section>
 
     <!-- Trust & Stats Section -->
-    <section style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 3rem 2rem; text-align: center;">
+    <section
+        style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 3rem 2rem; text-align: center;">
         <div style="max-width: 1200px; margin: 0 auto;">
             <h2 style="color: white; margin-bottom: 3rem;">Why 1000+ Customers Choose TSI Tiling</h2>
             <div style="display: flex; flex-wrap: wrap; gap: 2rem; justify-content: center;">
@@ -632,97 +827,124 @@ footer {
 
     <section id="services">
         <h2>Our Premium Services</h2>
-        <p style="text-align: center; font-size: 1.2rem; margin-bottom: 3rem; color: #666;">Professional craftsmanship with transparent pricing and lifetime warranties</p>
+        <p style="text-align: center; font-size: 1.2rem; margin-bottom: 3rem; color: #666;">Professional craftsmanship
+            with transparent pricing and lifetime warranties</p>
         <div class="services-container">
             <div class="service-card floating">
                 <span class="service-icon">🔲</span>
                 <h3>Premium Tiling Services</h3>
-                <p>Transform your space with expert tile installation. From ceramic to natural stone, we deliver perfection every time.</p>
-                <div style="margin: 1rem 0; padding: 0.5rem; background: #e8f5e8; border-radius: 5px;">Starting from R150/m²</div>
-                <a href="#contact" style="display: inline-block; background: #3498db; color: white; padding: 0.5rem 1rem; text-decoration: none; border-radius: 5px; margin-top: 1rem;">Get Quote</a>
+                <p>Transform your space with expert tile installation. From ceramic to natural stone, we deliver
+                    perfection every time.</p>
+                <div style="margin: 1rem 0; padding: 0.5rem; background: #e8f5e8; border-radius: 5px;">Starting from
+                    R120/m²</div>
+                <a href="#contact"
+                    style="display: inline-block; background: #3498db; color: white; padding: 0.5rem 1rem; text-decoration: none; border-radius: 5px; margin-top: 1rem;">Get
+                    Quote</a>
             </div>
             <div class="service-card">
                 <span class="service-icon">🔧</span>
                 <h3>Plumbing</h3>
-                <p>Expert plumbing services including installations, repairs, and maintenance for residential and commercial properties. Reliable solutions for all your plumbing needs.</p>
+                <p>Expert plumbing services including installations, repairs, and maintenance for residential and
+                    commercial properties. Reliable solutions for all your plumbing needs.</p>
             </div>
             <div class="service-card">
                 <span class="service-icon">🪵</span>
                 <h3>Wooden Flooring and Vinyl</h3>
-                <p>High-quality wooden flooring and vinyl installations. We provide durable, stylish options for any space, ensuring a perfect fit and finish.</p>
+                <p>High-quality wooden flooring and vinyl installations. We provide durable, stylish options for any
+                    space, ensuring a perfect fit and finish.</p>
             </div>
             <div class="service-card">
                 <span class="service-icon">🧱</span>
                 <h3>Building (Brick Layer)</h3>
-                <p>Professional bricklaying services for walls, foundations, and structures. Skilled craftsmanship for residential and commercial building projects.</p>
+                <p>Professional bricklaying services for walls, foundations, and structures. Skilled craftsmanship for
+                    residential and commercial building projects.</p>
             </div>
             <div class="service-card">
                 <span class="service-icon">🔨</span>
                 <h3>Carpentry</h3>
-                <p>Custom carpentry work including cabinets, shelving, and structural repairs. Expert woodwork to enhance your home or business.</p>
+                <p>Custom carpentry work including cabinets, shelving, and structural repairs. Expert woodwork to
+                    enhance your home or business.</p>
             </div>
             <div class="service-card">
                 <span class="service-icon">🎨</span>
                 <h3>Painting</h3>
-                <p>Interior and exterior painting services with premium paints and techniques. Transform your space with our professional painting expertise.</p>
+                <p>Interior and exterior painting services with premium paints and techniques. Transform your space with
+                    our professional painting expertise.</p>
             </div>
             <div class="service-card">
                 <span class="service-icon">🚛</span>
                 <h3>Transportation (Rubble and Deliveries) (all goods are insured)</h3>
-                <p>Reliable transportation services for rubble removal and material deliveries. We ensure safe and timely transport for all your construction needs.</p>
+                <p>Reliable transportation services for rubble removal and material deliveries. We ensure safe and
+                    timely transport for all your construction needs.</p>
             </div>
         </div>
     </section>
 
-    <section id="about" style="background: linear-gradient(135deg, #f8f9fa, #e9ecef); border-radius: 10px; margin: 2rem auto; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+    <section id="about"
+        style="background: linear-gradient(135deg, #f8f9fa, #e9ecef); border-radius: 10px; margin: 2rem auto; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
         <h2>About Us</h2>
         <div style="display: flex; flex-wrap: wrap; gap: 2rem; align-items: center;">
             <div style="flex: 1 1 300px;">
                 <h3>Our Story</h3>
-                <p>Founded in 2010, TSI Tiling and Patterns has been a cornerstone in the construction industry, specializing in high-quality tiling, plumbing, and related services. What started as a small family business has grown into a trusted name in the community, thanks to our commitment to excellence and customer satisfaction.</p>
+                <p>Founded in 2010, TSI Tiling and Patterns has been a cornerstone in the construction industry,
+                    specializing in high-quality tiling, plumbing, and related services. What started as a small family
+                    business has grown into a trusted name in the community, thanks to our commitment to excellence and
+                    customer satisfaction.</p>
                 <h3>Our Mission</h3>
-                <p>To provide exceptional craftsmanship and reliable services that transform spaces and exceed our clients' expectations. We believe in building not just structures, but lasting relationships with every project we undertake.</p>
+                <p>To provide exceptional craftsmanship and reliable services that transform spaces and exceed our
+                    clients' expectations. We believe in building not just structures, but lasting relationships with
+                    every project we undertake.</p>
             </div>
             <div style="flex: 1 1 300px;">
                 <h3>Why Choose Us?</h3>
                 <ul style="list-style: none; padding: 0;">
-                    <li style="margin-bottom: 0.5rem;"><strong>Expertise:</strong> Over 15 years of combined experience in the field</li>
-                    <li style="margin-bottom: 0.5rem;"><strong>Quality:</strong> Premium materials and meticulous attention to detail</li>
-                    <li style="margin-bottom: 0.5rem;"><strong>Reliability:</strong> On-time delivery and transparent communication</li>
-                    <li style="margin-bottom: 0.5rem;"><strong>Insurance:</strong> Fully insured for your peace of mind</li>
+                    <li style="margin-bottom: 0.5rem;"><strong>Expertise:</strong> Over 15 years of combined experience
+                        in the field</li>
+                    <li style="margin-bottom: 0.5rem;"><strong>Quality:</strong> Premium materials and meticulous
+                        attention to detail</li>
+                    <li style="margin-bottom: 0.5rem;"><strong>Reliability:</strong> On-time delivery and transparent
+                        communication</li>
+                    <li style="margin-bottom: 0.5rem;"><strong>Insurance:</strong> Fully insured for your peace of mind
+                    </li>
                     <li style="margin-bottom: 0.5rem;"><strong>Local:</strong> Serving the community with pride</li>
                 </ul>
             </div>
         </div>
-        <p style="text-align: center; font-style: italic; margin-top: 2rem; color: #2c3e50;">"Quality craftsmanship, lasting results – that's the TSI promise."</p>
+        <p style="text-align: center; font-style: italic; margin-top: 2rem; color: #2c3e50;">"Quality craftsmanship,
+            lasting results – that's the TSI promise."</p>
     </section>
 
     <section id="team">
         <h2>Meet Our Team</h2>
         <div class="team-container">
             <div class="team-member">
-                <div class="member-photo">[Photo Placeholder]</div>
+                <div class="member-photo"><img src="assets/img/thomas.jpeg" alt="Thomas - Expert Tiler"></div>
                 <h3>Thomas</h3>
                 <p class="role">Tiler</p>
-                <p>Expert tiler with years of experience in creating beautiful, durable tile installations for homes and businesses.</p>
+                <p>Expert tiler with years of experience in creating beautiful, durable tile installations for homes and
+                    businesses.</p>
             </div>
             <div class="team-member">
                 <div class="member-photo">[Photo Placeholder]</div>
                 <h3>Donald</h3>
                 <p class="role">Plumber</p>
-                <p>Certified plumber specializing in efficient repairs, installations, and maintenance of plumbing systems.</p>
+                <p>Certified plumber specializing in efficient repairs, installations, and maintenance of plumbing
+                    systems.</p>
             </div>
+
             <div class="team-member">
-                <div class="member-photo">[Photo Placeholder]</div>
-                <h3>Tsietsi Paile</h3>
-                <p class="role">Project Manager</p>
-                <p>Dedicated project manager ensuring all jobs are completed on time, within budget, and to the highest standards.</p>
-            </div>
-            <div class="team-member">
-                <div class="member-photo">[Photo Placeholder]</div>
+                <div class="member-photo"><img src="assets/img/Mathonsi.jpeg" alt="Mathonsi - Skilled Carpenter"></div>
                 <h3>Mathonsi</h3>
                 <p class="role">Carpenter</p>
-                <p>Skilled carpenter providing custom woodwork, repairs, and installations for residential and commercial projects.</p>
+                <p>Skilled carpenter providing custom woodwork, repairs, and installations for residential and
+                    commercial projects.</p>
+            </div>
+            <div class="team-member">
+                <div class="member-photo"><img src="assets/img/Mr T.jpeg" alt="Tsietsi Paile - Project Manager"></div>
+                <h3>Tsietsi Paile</h3>
+                <p class="role">Project Manager</p>
+                <p>Dedicated project manager ensuring all jobs are completed on time, within budget, and to the highest
+                    standards.</p>
             </div>
         </div>
     </section>
@@ -757,6 +979,63 @@ footer {
         </div>
     </section>
 
+    <section id="ratings" class="ratings-section">
+        <h2>Client Ratings & Comments</h2>
+        
+        <div class="overall-rating">
+            <h3>4.8/5</h3>
+            <div class="overall-stars">
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+            </div>
+            <p class="rating-summary">Based on 47 customer reviews</p>
+        </div>
+
+        <div class="ratings-container">
+            <div class="rating-card">
+                <div class="star-rating">
+                    <span class="star">★</span>
+                    <span class="star">★</span>
+                    <span class="star">★</span>
+                    <span class="star">★</span>
+                    <span class="star">★</span>
+                </div>
+                <h3>Excellent Tiling Work</h3>
+                <p>"TSI Tiling did an amazing job on our kitchen renovation. The attention to detail was outstanding, and they completed the project on time and within budget."</p>
+                <div class="rating-author">- Sarah Johnson</div>
+            </div>
+
+            <div class="rating-card">
+                <div class="star-rating">
+                    <span class="star">★</span>
+                    <span class="star">★</span>
+                    <span class="star">★</span>
+                    <span class="star">★</span>
+                    <span class="star">★</span>
+                </div>
+                <h3>Professional Service</h3>
+                <p>"Thomas and his team were incredibly professional. They cleaned up after themselves every day and the quality of their work is exceptional. Highly recommend!"</p>
+                <div class="rating-author">- Michael Chen</div>
+            </div>
+
+            <div class="rating-card">
+                <div class="star-rating">
+                    <span class="star">★</span>
+                    <span class="star">★</span>
+                    <span class="star">★</span>
+                    <span class="star">★</span>
+                    <span class="star">★</span>
+                </div>
+                <h3>Great Communication</h3>
+                <p>"Tsietsi kept us informed throughout the entire project. The team was reliable, skilled, and delivered exactly what they promised. Our bathroom looks fantastic!"</p>
+                <div class="rating-author">- Emma Williams</div>
+            </div>
+        </div>
+    </section>
+
     <section id="weekly-updates">
         <h2>Weekly Updates</h2>
         <div class="carousel">
@@ -764,25 +1043,6 @@ footer {
             <img src="assets/img/bathroom-plumbing.jpeg" alt="Weekly Update: Plumbing Repair">
             <img src="assets/img/carpentry.webp" alt="Weekly Update: Flooring Installation">
             <img src="assets/img/capntry_work.webp" alt="Weekly Update: Carpentry Work">
-        </div>
-    </section>
-
-    <section id="testimonials" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
-        <h2 style="color: white;">What Our Customers Say</h2>
-        <p style="text-align: center; font-size: 1.1rem; margin-bottom: 3rem; color: rgba(255,255,255,0.9);">⭐⭐⭐⭐⭐ Rated 4.9/5 stars by over 500 customers</p>
-        <div class="testimonials-container">
-            <div class="testimonial">
-                <p>"TSI did an amazing job on our bathroom tiles. Professional, clean, and on time!"</p>
-                <cite>- Sarah M., Homeowner</cite>
-            </div>
-            <div class="testimonial">
-                <p>"Their plumbing work is top-notch. Fixed our leak quickly and affordably."</p>
-                <cite>- John D., Business Owner</cite>
-            </div>
-            <div class="testimonial">
-                <p>"Beautiful wooden flooring installation. Highly recommend for any home project."</p>
-                <cite>- Lisa K., Renovator</cite>
-            </div>
         </div>
     </section>
 
@@ -810,17 +1070,22 @@ footer {
 
     <section id="contact" style="background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);">
         <h2>Ready to Transform Your Space?</h2>
-        <p style="font-size: 1.3rem; font-weight: bold; color: #d63384; margin-bottom: 1rem;">🔥 LIMITED TIME: Free Consultation Worth R500!</p>
-        <p>Get your free, no-obligation quote today. Our experts are standing by to help you create the space of your dreams.</p>
+        <p style="font-size: 1.3rem; font-weight: bold; color: #d63384; margin-bottom: 1rem;">🔥 LIMITED TIME: Free
+            Consultation Worth R500!</p>
+        <p>Get your free, no-obligation quote today. Our experts are standing by to help you create the space of your
+            dreams.</p>
         <div class="contact-info">
             <p style="font-size: 1.2rem; color: #d63384; font-weight: bold;">📞 CALL NOW FOR IMMEDIATE SERVICE</p>
-            <p><strong>📞 Phone:</strong> <a href="tel:0655830779" style="color: #d63384; font-weight: bold; text-decoration: none;">065 583 0779</a></p>
-            <p><strong>📧 Email:</strong> <a href="mailto:info@tsitiling.com" style="color: #d63384;">info@tsitiling.com</a></p>
+            <p><strong>📞 Phone:</strong> <a href="tel:0655830779"
+                    style="color: #d63384; font-weight: bold; text-decoration: none;">065 583 0779</a></p>
+            <p><strong>📧 Email:</strong> <a href="mailto:info@tsitiling.com"
+                    style="color: #d63384;">info@tsitiling.com</a></p>
             <p><strong>📍 Address:</strong> 123 Main St, City, State, ZIP</p>
             <p><strong>⏰ Hours:</strong> Mon-Fri 8AM-5PM, Sat 8AM-2PM</p>
             <div style="margin-top: 2rem; padding: 1rem; background: rgba(255,255,255,0.9); border-radius: 10px;">
                 <p style="color: #333; font-weight: bold; margin: 0;">⚡ Emergency Services Available 24/7</p>
-                <p style="color: #333; margin: 0.5rem 0 0 0;">🛡️ Fully Licensed & Insured | 💯 Satisfaction Guaranteed</p>
+                <p style="color: #333; margin: 0.5rem 0 0 0;">🛡️ Fully Licensed & Insured | 💯 Satisfaction Guaranteed
+                </p>
             </div>
         </div>
     </section>
@@ -829,55 +1094,87 @@ footer {
         <div class="footer-content">
             <div>
                 <p>&copy; 2026 TSI Tiling and Patterns. All rights reserved.</p>
-                <p style="font-size: 0.8rem; opacity: 0.8;">Design by <a href="https://mplai.co.za" target="_blank" rel="noopener" style="color: #ecf0f1; text-decoration: underline;">MPL AI</a></p>
+                <p style="font-size: 0.8rem; opacity: 0.8;">Design by <a href="https://mplai.co.za" target="_blank"
+                        rel="noopener" style="color: #ecf0f1; text-decoration: underline;">MPL AI</a></p>
             </div>
             <div class="social-links">
                 <a href="#" aria-label="Facebook">Facebook</a>
                 <a href="#" aria-label="Instagram">Instagram</a>
-                <a href="#" aria-label="LinkedIn">LinkedIn</a>
+                <a href="#" aria-label="TikTok">TikTok</a>
             </div>
         </div>
     </footer>
 
     <script>
         console.log('TSI Tiling and Patterns website loaded.');
-        
+
         // Hamburger menu functionality
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const hamburger = document.getElementById('hamburger');
             const mobileMenu = document.getElementById('mobileMenu');
+            const menuOverlay = document.getElementById('menuOverlay');
             const header = document.querySelector('header');
-            
+            const body = document.body;
+
             // Toggle mobile menu
-            hamburger.addEventListener('click', function() {
-                hamburger.classList.toggle('active');
-                mobileMenu.classList.toggle('active');
-            });
-            
-            // Close mobile menu when clicking on a link
-            mobileMenu.addEventListener('click', function(e) {
-                if (e.target.tagName === 'A') {
+            function toggleMenu() {
+                const isActive = hamburger.classList.contains('active');
+
+                if (isActive) {
+                    // Close menu
                     hamburger.classList.remove('active');
                     mobileMenu.classList.remove('active');
+                    menuOverlay.classList.remove('active');
+                    body.classList.remove('menu-open');
+                } else {
+                    // Open menu
+                    hamburger.classList.add('active');
+                    mobileMenu.classList.add('active');
+                    menuOverlay.classList.add('active');
+                    body.classList.add('menu-open');
+                }
+            }
+
+            hamburger.addEventListener('click', toggleMenu);
+
+            // Close menu when clicking overlay
+            menuOverlay.addEventListener('click', toggleMenu);
+
+            // Close mobile menu when clicking on a link
+            mobileMenu.addEventListener('click', function (e) {
+                if (e.target.tagName === 'A') {
+                    toggleMenu();
                 }
             });
-            
+
+            // Close menu on escape key
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape' && hamburger.classList.contains('active')) {
+                    toggleMenu();
+                }
+            });
+
             // Add scroll effect to header
-            window.addEventListener('scroll', function() {
-                if (window.scrollY > 50) {
+            let lastScrollTop = 0;
+            window.addEventListener('scroll', function () {
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+                if (scrollTop > 50) {
                     header.classList.add('scrolled');
                 } else {
                     header.classList.remove('scrolled');
                 }
+
+                lastScrollTop = scrollTop;
             });
-            
+
             // Smooth scroll for anchor links
             document.querySelectorAll('a[href^="#"]').forEach(anchor => {
                 anchor.addEventListener('click', function (e) {
                     e.preventDefault();
                     const target = document.querySelector(this.getAttribute('href'));
                     if (target) {
-                        const offsetTop = target.offsetTop - 100; // Account for fixed header
+                        const offsetTop = target.offsetTop - 80; // Account for fixed header
                         window.scrollTo({
                             top: offsetTop,
                             behavior: 'smooth'
@@ -888,4 +1185,5 @@ footer {
         });
     </script>
 </body>
+
 </html>
