@@ -261,7 +261,7 @@ function getDefaultUpdates() {
             description: 'Completed the kitchen floor tiling with premium ceramic tiles. The client is very satisfied with the finish and precision of the work.',
             progress: 100,
             date: '2026-02-20',
-            image: 'woodenfloor_work.jpeg'
+            image: 'assets/img/tiling_work.jpeg'
         },
         {
             id: 2,
@@ -270,7 +270,7 @@ function getDefaultUpdates() {
             description: 'Installing high-quality wooden flooring in the master bedroom. The laminate flooring looks stunning and adds warmth to the room.',
             progress: 75,
             date: '2026-02-18',
-            image: 'woodenfloor_work.jpeg'
+            image: 'assets/img/woodenfloor_work.jpeg'
         },
         {
             id: 3,
@@ -279,7 +279,7 @@ function getDefaultUpdates() {
             description: 'Building custom wardrobes for a client\'s bedroom. The white finish cabinets are coming along beautifully with modern handles.',
             progress: 60,
             date: '2026-02-15',
-            image: 'carpentry_work.jpeg'
+            image: 'assets/img/carpentry_work.jpeg'
         }
     ];
 }
