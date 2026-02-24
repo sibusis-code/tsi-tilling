@@ -1,1136 +1,597 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TSI Tiling and Patterns</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        html {
-            scroll-behavior: smooth;
-        }
-
-        body {
-            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-            line-height: 1.6;
-            color: #e0e0e0;
-            background: #1a1a1a;
-        }
-
-        /* Add floating elements animation */
-        @keyframes float {
-
-            0%,
-            100% {
-                transform: translateY(0px);
-            }
-
-            50% {
-                transform: translateY(-10px);
-            }
-        }
-
-        .floating {
-            animation: float 3s ease-in-out infinite;
-        }
-
-        header {
-            background: #2d3748;
-            color: white;
-            padding: 1rem 2rem;
-            text-align: center;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            transition: all 0.3s ease;
-        }
-
-        header.scrolled {
-            padding: 0.5rem 2rem;
-            background: rgba(45, 55, 72, 0.95);
-            backdrop-filter: blur(10px);
-        }
-
-        body {
-            padding-top: 120px;
-            /* Account for fixed header */
-        }
-
-        header h1 {
-            margin: 0;
-            font-size: 2.5rem;
-        }
-
-        .nav-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .hamburger {
-            display: none;
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
-            padding: 0.8rem;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-            position: relative;
-            z-index: 1001;
-        }
-
-        .hamburger:hover {
-            background: rgba(255, 255, 255, 0.15);
-            transform: scale(1.05);
-        }
-
-        .hamburger span {
-            display: block;
-            width: 28px;
-            height: 3px;
-            background: white;
-            margin: 6px 0;
-            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            border-radius: 2px;
-            transform-origin: center;
-        }
-
-        .hamburger.active {
-            background: rgba(74, 85, 104, 0.2);
-        }
-
-        .hamburger.active span:nth-child(1) {
-            transform: rotate(45deg) translate(9px, 9px);
-            background: #4a5568;
-        }
-
-        .hamburger.active span:nth-child(2) {
-            opacity: 0;
-            transform: scale(0);
-        }
-
-        .hamburger.active span:nth-child(3) {
-            transform: rotate(-45deg) translate(9px, -9px);
-            background: #4a5568;
-        }
-
-        nav ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            display: flex;
-            gap: 2rem;
-            transition: all 0.3s ease;
-        }
-
-        nav ul li {
-            margin: 0;
-        }
-
-        nav ul.mobile-menu {
-            display: flex;
-            position: fixed;
-            top: 80px;
-            left: 0;
-            right: 0;
-            background: #2d3748;
-            flex-direction: column;
-            padding: 0;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-            max-height: 0;
-            overflow: hidden;
-            opacity: 0;
-            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            backdrop-filter: blur(10px);
-            border-bottom: 3px solid #4a5568;
-            z-index: 1000;
-        }
-
-        nav ul.mobile-menu.active {
-            max-height: 500px;
-            opacity: 1;
-            padding: 1rem 0;
-        }
-
-        nav ul.mobile-menu li {
-            margin: 0;
-            text-align: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        nav ul.mobile-menu li:last-child {
-            border-bottom: none;
-        }
-
-        nav ul.mobile-menu li a {
-            display: block;
-            padding: 1rem 2rem;
-            color: white;
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 1.1rem;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        nav ul.mobile-menu li a:hover {
-            background: rgba(74, 85, 104, 0.2);
-            color: #4a5568;
-            padding-left: 2.5rem;
-        }
-
-        nav ul.mobile-menu li a:before {
-            content: '→';
-            position: absolute;
-            left: 1rem;
-            opacity: 0;
-            transition: all 0.3s ease;
-        }
-
-        nav ul.mobile-menu li a:hover:before {
-            opacity: 1;
-        }
-
-        nav a {
-            color: white;
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s;
-        }
-
-        nav a:hover {
-            color: #ecf0f1;
-        }
-
-        .hero {
-            background: linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(45, 55, 72, 0.6)), url('assets/img/hero.jpeg') no-repeat center center/cover;
-            color: white;
-            text-align: center;
-            padding: 6rem 2rem 4rem;
-            min-height: 450px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
-            box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.3);
-        }
-
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: repeating-linear-gradient(45deg,
-                    rgba(255, 255, 255, 0.02),
-                    rgba(255, 255, 255, 0.02) 15px,
-                    transparent 15px,
-                    transparent 30px);
-            pointer-events: none;
-        }
-
-        .hero::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 100px;
-            background: linear-gradient(to top, rgba(244, 244, 244, 0.1), transparent);
-            pointer-events: none;
-        }
-
-        .hero-content {
-            position: relative;
-            z-index: 1;
-            animation: fadeInUp 1s ease-out;
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .hero-content h2 {
-            font-size: 3.2rem;
-            margin-bottom: 1.5rem;
-            text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.7), 1px 1px 2px rgba(0, 0, 0, 0.5);
-            font-weight: 700;
-            letter-spacing: 1px;
-            line-height: 1.1;
-        }
-
-        .hero-content p {
-            font-size: 1.4rem;
-            margin-bottom: 2.5rem;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
-            max-width: 700px;
-            margin-left: auto;
-            margin-right: auto;
-            line-height: 1.6;
-            font-weight: 300;
-            opacity: 0.95;
-        }
-
-        .btn {
-            display: inline-block;
-            background: linear-gradient(135deg, #4a5568, #2d3748);
-            color: white;
-            padding: 1rem 2rem;
-            text-decoration: none;
-            border-radius: 50px;
-            font-weight: bold;
-            font-size: 1.1rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(74, 85, 104, 0.3);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.5s;
-        }
-
-        .btn:hover::before {
-            left: 100%;
-        }
-
-        .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(74, 85, 104, 0.4);
-        }
-
-        section {
-            padding: 4rem 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        section h2 {
-            text-align: center;
-            margin-bottom: 2rem;
-            color: #f0f0f0;
-            font-size: 2.5rem;
-        }
-
-        .services-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 2rem;
-            justify-content: center;
-        }
-
-        .service-card {
-            background: #2a2a2a;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-            padding: 2rem;
-            flex: 1 1 300px;
-            text-align: center;
-            transition: transform 0.3s, box-shadow 0.3s;
-            color: #d0d0d0;
-        }
-
-        .service-icon {
-            font-size: 3rem;
-            color: #a0d8ff;
-            margin-bottom: 1rem;
-            display: block;
-        }
-
-        .service-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .service-card h3 {
-            color: #ecf0f1;
-            margin-bottom: 1rem;
-        }
-
-        .team-member h3 {
-            color: #ecf0f1;
-            margin-bottom: 0.5rem;
-        }
-
-        #about h3 {
-            color: #f0f0f0;
-        }
-
-        #about p {
-            color: #d0d0d0;
-        }
-
-        #about ul {
-            color: #d0d0d0;
-        }
-
-        .team-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 2rem;
-            justify-content: center;
-        }
-
-        .team-member {
-            background: #2a2a2a;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-            padding: 2rem;
-            flex: 1 1 250px;
-            text-align: center;
-            transition: transform 0.3s;
-            color: #d0d0d0;
-        }
-
-        .team-member:hover {
-            transform: translateY(-5px);
-        }
-
-        .member-photo {
-            width: 100px;
-            height: 100px;
-            background-color: #bdc3c7;
-            border-radius: 50%;
-            margin: 0 auto 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.8rem;
-            color: #7f8c8d;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-            transition: all 0.3s ease;
-        }
-
-        .member-photo img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 50%;
-            transition: transform 0.3s ease;
-        }
-
-        .team-member:hover .member-photo {
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
-            transform: scale(1.05);
-        }
-
-        .team-member:hover .member-photo img {
-            transform: scale(1.1);
-        }
-
-        /* Ratings and Comments Section */
-        .ratings-section {
-            background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
-            color: white;
-            padding: 4rem 2rem;
-            text-align: center;
-        }
-
-        .ratings-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-top: 2rem;
-        }
-
-        .rating-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 2rem;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s ease;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .rating-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
-            background: rgba(255, 255, 255, 0.15);
-        }
-
-        .star-rating {
-            display: flex;
-            justify-content: center;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-            font-size: 1.5rem;
-        }
-
-        .star {
-            color: #ffd700;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
-        }
-
-        .rating-card h3 {
-            margin-bottom: 1rem;
-            color: #ffffff;
-            font-size: 1.3rem;
-        }
-
-        .rating-card p {
-            font-style: italic;
-            margin-bottom: 1rem;
-            line-height: 1.6;
-            color: rgba(255, 255, 255, 0.9);
-        }
-
-        .rating-author {
-            font-weight: bold;
-            font-size: 0.9rem;
-            color: #ffd700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .overall-rating {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .overall-rating h3 {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-            color: #ffd700;
-        }
-
-        .overall-stars {
-            font-size: 2rem;
-            margin-bottom: 1rem;
-        }
-
-        .rating-summary {
-            font-size: 1.1rem;
-            opacity: 0.9;
-            color: #ffffff;
-        }
-
-        .role {
-            color: #a0d8ff;
-            font-weight: bold;
-            margin-bottom: 1rem;
-        }
-
-        .contact-info {
-            background: #2a2a2a;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-            padding: 2rem;
-            max-width: 600px;
-            margin: 0 auto;
-            text-align: center;
-            color: #d0d0d0;
-        }
-
-        .portfolio-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 2rem;
-            justify-content: center;
-        }
-
-        .portfolio-item {
-            background: #2a2a2a;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-            overflow: hidden;
-            flex: 1 1 300px;
-            text-align: center;
-            transition: transform 0.3s;
-        }
-
-        .portfolio-item:hover {
-            transform: translateY(-5px);
-        }
-
-        .portfolio-item img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-        }
-
-        .portfolio-item p {
-            padding: 1rem;
-            margin: 0;
-            font-weight: bold;
-            color: #f0f0f0;
-        }
-
-        .faq-container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .faq-item {
-            background: #2a2a2a;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-            margin-bottom: 1rem;
-            padding: 1.5rem;
-            color: #d0d0d0;
-        }
-
-        .faq-item h3 {
-            margin: 0 0 0.5rem 0;
-            color: #ecf0f1;
-        }
-
-        .faq-item p {
-            margin: 0;
-        }
-
-        .carousel {
-            position: relative;
-            width: 100%;
-            max-width: 800px;
-            margin: 0 auto;
-            height: 300px;
-            overflow: hidden;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .carousel img {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            opacity: 0;
-            animation: fade 16s infinite;
-        }
-
-        .carousel img:nth-child(1) {
-            animation-delay: 0s;
-        }
-
-        .carousel img:nth-child(2) {
-            animation-delay: 4s;
-        }
-
-        .carousel img:nth-child(3) {
-            animation-delay: 8s;
-        }
-
-        .carousel img:nth-child(4) {
-            animation-delay: 12s;
-        }
-
-        @keyframes fade {
-
-            0%,
-            24% {
-                opacity: 1;
-            }
-
-            25%,
-            100% {
-                opacity: 0;
-            }
-        }
-
-        footer {
-            background-color: #2d3748;
-            color: white;
-            padding: 3rem 0;
-            margin-top: 2rem;
-        }
-
-        .footer-content {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
-        }
-
-        .footer-section {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .footer-section h3,
-        .footer-section h4 {
-            color: #ecf0f1;
-            font-weight: 600;
-        }
-
-        .footer-section p {
-            font-size: 0.9rem;
-            line-height: 1.5;
-            margin: 0.3rem 0;
-        }
-
-        .contact-info a,
-        .staff-list a {
-            color: #ecf0f1;
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-
-        .contact-info a:hover,
-        .staff-list a:hover {
-            color: #3498db;
-        }
-
-        .social-links {
-            display: flex;
-            flex-direction: column;
-            gap: 0.7rem;
-        }
-
-        .social-links a {
-            color: #ecf0f1;
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s;
-            width: fit-content;
-        }
-
-        .social-links a:hover {
-            color: #3498db;
-        }
-
-        /* Mobile menu overlay */
-        .menu-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-            z-index: 999;
-        }
-
-        .menu-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        @media (max-width: 768px) {
-            .hero-content h2 {
-                font-size: 2rem;
-            }
-
-            section {
-                padding: 2rem 1rem;
-            }
-
-            .services-container,
-            .team-container {
-                flex-direction: column;
-            }
-
-            .footer-content {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
-            }
-
-            /* Mobile Navigation */
-            .hamburger {
-                display: block;
-            }
-
-            nav ul:not(.mobile-menu) {
-                display: none;
-            }
-
-            header h1 {
-                font-size: 1.8rem;
-            }
-
-            .nav-container {
-                text-align: left;
-            }
-
-            body {
-                padding-top: 80px;
-            }
-
-            header {
-                padding: 0.8rem 1rem;
-            }
-
-            /* Prevent body scroll when menu is open */
-            body.menu-open {
-                overflow: hidden;
-            }
-        }
-    </style>
+    <title>TSI Tiling and Patterns | Premium Construction Services</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
 </head>
-
 <body>
-    <header>
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
         <div class="nav-container">
-            <h1>TSI Tiling and Patterns</h1>
-            <button class="hamburger" id="hamburger">
+            <a href="#home" class="logo">
+                <span class="logo-icon"><i class="fas fa-hard-hat"></i></span>
+                <span class="logo-text">TSI<span class="logo-accent"> Tiling</span></span>
+            </a>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#home" class="nav-link active">Home</a></li>
+                <li><a href="#services" class="nav-link">Services</a></li>
+                <li><a href="#about" class="nav-link">About</a></li>
+                <li><a href="#team" class="nav-link">Team</a></li>
+                <li><a href="#portfolio" class="nav-link">Portfolio</a></li>
+                <li><a href="#weekly-updates" class="nav-link">Weekly Updates</a></li>
+                <li><a href="#contact" class="nav-link">Contact</a></li>
+            </ul>
+            <a href="#contact" class="btn btn-primary nav-cta">Get Quote</a>
+            <button class="mobile-toggle" id="mobileToggle">
                 <span></span>
                 <span></span>
                 <span></span>
             </button>
-            <nav>
-                <ul>
-                    <li><a href="#home">Home</a></li>
-                    <li><a href="#services">Services</a></li>
-                    <li><a href="#about">About</a></li>
-                    <li><a href="#team">Team</a></li>
-                    <li><a href="#portfolio">Portfolio</a></li>
-                    <li><a href="#weekly-updates">Weekly Updates</a></li>
-                    <li><a href="#contact">Contact</a></li>
-                </ul>
-            </nav>
         </div>
-    </header>
-
-    <div class="menu-overlay" id="menuOverlay"></div>
-    <nav>
-        <ul class="mobile-menu" id="mobileMenu">
-            <li><a href="#home">🏠 Home</a></li>
-            <li><a href="#services">🔧 Services</a></li>
-            <li><a href="#about">ℹ️ About</a></li>
-            <li><a href="#team">👥 Team</a></li>
-            <li><a href="#portfolio">📸 Portfolio</a></li>
-            <li><a href="#weekly-updates">📅 Weekly Updates</a></li>
-            <li><a href="#contact">📞 Contact</a></li>
-        </ul>
     </nav>
 
+    <!-- Hero Section -->
     <section id="home" class="hero">
+        <div class="hero-bg">
+            <div class="hero-pattern"></div>
+        </div>
         <div class="hero-content">
-            <!-- <h2>Transform Your Space with Expert Craftsmanship</h2> -->
-            <p><strong>5+ Years of Excellence</strong> | <strong>95%
-                    Satisfaction Guaranteed</strong></p>
-            <!-- <p>From stunning tile installations to reliable plumbing solutions - we deliver quality that lasts a
-                lifetime.</p> -->
-            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-top: 2rem;">
-                <a href="#contact" class="btn">Get FREE Quote Today</a>
-                <a href="tel:0655830779" class="btn" style="background: linear-gradient(135deg, #2ecc71, #27ae60);">📞
-                    Call Now: 065 583 0779</a>
+            <div class="hero-badge">
+                <i class="fas fa-star"></i>
+                <span>5+ Years of Excellence</span>
             </div>
-            <p style="font-size: 0.9rem; margin-top: 1rem; opacity: 0.9;">⚡ Emergency Services Available | 🛡️ Fully
-                Licensed & Insured | 💯 Lifetime Warranty</p>
+            <h1 class="hero-title">
+                Transform Your Space With
+                <span class="gradient-text">Expert Craftsmanship</span>
+            </h1>
+            <p class="hero-subtitle">
+                Premium tiling, plumbing, carpentry, and building services in Pretoria. 
+                We deliver quality workmanship with lifetime warranties.
+            </p>
+            <div class="hero-stats">
+                <div class="stat">
+                    <span class="stat-number">95%</span>
+                    <span class="stat-label">Satisfaction Rate</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number">500+</span>
+                    <span class="stat-label">Projects Completed</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number">5+</span>
+                    <span class="stat-label">Years Experience</span>
+                </div>
+            </div>
+            <div class="hero-cta">
+                <a href="#contact" class="btn btn-primary btn-lg">
+                    <i class="fas fa-calculator"></i>
+                    Get FREE Quote
+                </a>
+                <a href="tel:0655830779" class="btn btn-outline btn-lg">
+                    <i class="fas fa-phone"></i>
+                    Call: 065 583 0779
+                </a>
+            </div>
+            <div class="hero-trust">
+                <span class="trust-item"><i class="fas fa-bolt"></i> Emergency Services</span>
+                <span class="trust-item"><i class="fas fa-shield-alt"></i> Fully Licensed & Insured</span>
+                <span class="trust-item"><i class="fas fa-award"></i> Lifetime Warranty</span>
+            </div>
         </div>
-    </section>
-
-    <section id="services">
-        <h2>Our Premium Services</h2>
-        <p style="text-align: center; font-size: 1.2rem; margin-bottom: 3rem; color: #b0b0b0;">Professional craftsmanship
-            with transparent pricing and lifetime warranties</p>
-        <div class="services-container">
-            <div class="service-card floating">
-                <span class="service-icon">🔲</span>
-                <h3>Premium Tiling Services</h3>
-                <p>Transform your space with expert tile installation. From ceramic to natural stone, we deliver
-                    perfection every time.</p>
-                <div style="margin: 1rem 0; padding: 0.5rem; background: #3a4a3a; border-radius: 5px;">Starting from
-                    R120/m²</div>
-                <a href="#contact"
-                    style="display: inline-block; background: #3498db; color: white; padding: 0.5rem 1rem; text-decoration: none; border-radius: 5px; margin-top: 1rem;">Get
-                    Quote</a>
-            </div>
-            <div class="service-card">
-                <span class="service-icon">🔧</span>
-                <h3>Plumbing</h3>
-                <p>Expert plumbing services including installations, repairs, and maintenance for residential and
-                    commercial properties. Reliable solutions for all your plumbing needs.</p>
-            </div>
-            <div class="service-card">
-                <span class="service-icon">🪵</span>
-                <h3>Wooden Flooring and Vinyl</h3>
-                <p>High-quality wooden flooring and vinyl installations. We provide durable, stylish options for any
-                    space, ensuring a perfect fit and finish.</p>
-            </div>
-            <div class="service-card">
-                <span class="service-icon">🧱</span>
-                <h3>Building (Brick Layer)</h3>
-                <p>Professional bricklaying services for walls, foundations, and structures. Skilled craftsmanship for
-                    residential and commercial building projects.</p>
-            </div>
-            <div class="service-card">
-                <span class="service-icon">🔨</span>
-                <h3>Carpentry</h3>
-                <p>Custom carpentry work including cabinets, shelving, and structural repairs. Expert woodwork to
-                    enhance your home or business.</p>
-            </div>
-            <div class="service-card">
-                <span class="service-icon">🎨</span>
-                <h3>Painting</h3>
-                <p>Interior and exterior painting services with premium paints and techniques. Transform your space with
-                    our professional painting expertise.</p>
+        <div class="hero-scroll">
+            <div class="scroll-indicator">
+                <span>Scroll Down</span>
+                <i class="fas fa-chevron-down"></i>
             </div>
         </div>
     </section>
 
-    <section id="about"
-        style="background: linear-gradient(135deg, #2a2a2a, #1f1f1f); border-radius: 10px; margin: 2rem auto; box-shadow: 0 4px 6px rgba(0,0,0,0.3);">
-        <h2>About Us</h2>
-        <div style="display: flex; flex-wrap: wrap; gap: 2rem; align-items: center;">
-            <div style="flex: 1 1 300px;">
-                <h3>Our Story</h3>
-                <p>Founded in 2025, TSI Tiling and Patterns combines coporate experince to give the best possible quality work,
-                    specializing in high-quality tiling, plumbing, and related services. What started as a small friendly
-                    business has grown into a trusted name in the community, thanks to our commitment to excellence and
-                    customer satisfaction.</p>
-                <h3>Our Mission</h3>
-                <p>To provide exceptional craftsmanship and reliable services that transform spaces and exceed our
-                    clients' expectations. We believe in building not just structures, but lasting relationships with
-                    every project we undertake.</p>
+    <!-- Services Section -->
+    <section id="services" class="services">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Our Services</span>
+                <h2 class="section-title">Premium Construction Services</h2>
+                <p class="section-subtitle">Professional craftsmanship with transparent pricing and lifetime warranties</p>
             </div>
-            <div style="flex: 1 1 300px;">
-                <h3>Why Choose Us?</h3>
-                <ul style="list-style: none; padding: 0;">
-                    <li style="margin-bottom: 0.5rem;"><strong>Expertise:</strong> Over 5 years of combined experience
-                        in the field</li>
-                    <li style="margin-bottom: 0.5rem;"><strong>Quality:</strong> Premium materials and meticulous
-                        attention to detail</li>
-                    <li style="margin-bottom: 0.5rem;"><strong>Reliability:</strong> On-time delivery and transparent
-                        communication</li>
-                    <li style="margin-bottom: 0.5rem;"><strong>Insurance:</strong> Fully insured for your peace of mind
-                    </li>
-                    <li style="margin-bottom: 0.5rem;"><strong>Local:</strong> Serving the community with pride</li>
-                </ul>
-            </div>
-        </div>
-        <p style="text-align: center; font-style: italic; margin-top: 2rem; color: #a0d8ff;">"Quality craftsmanship,
-            lasting results – that's the TSI promise."</p>
-    </section>
-
-    <section id="team">
-        <h2>Meet Our Team</h2>
-        <div class="team-container">
-            <div class="team-member">
-                <div class="member-photo"><img src="assets/img/thomas.jpeg" alt="Thomas - Expert Tiler"></div>
-                <h3>Thomas</h3>
-                <p class="role">Tiler</p>
-                <p>Expert tiler with years of experience in creating beautiful, durable tile installations for homes and
-                    businesses.</p>
-            </div>
-
-            <div class="team-member">
-                <div class="member-photo"><img src="assets/img/Joseph.jpeg" alt="Joseph - Plumber & Builder"></div>
-                <h3>Joseph</h3>
-                <p class="role">Plumber & Builder</p>
-                <p>Expert plumber and builder with extensive experience in plumbing installations, repairs, and construction work for residential and commercial projects.</p>
-            </div>
-
-            <div class="team-member">
-                <div class="member-photo"><img src="assets/img/Mathonsi.jpeg" alt="Mathonsi - Skilled Carpenter"></div>
-                <h3>Mathonsi</h3>
-                <p class="role">Carpenter</p>
-                <p>Skilled carpenter providing custom woodwork, repairs, and installations for residential and
-                    commercial projects.</p>
-            </div>
-            <div class="team-member">
-                <div class="member-photo"><img src="assets/img/Mr T.jpeg" alt="Tsietsi Paile - Project Manager"></div>
-                <h3>Tsietsi Paile</h3>
-                <p class="role">Project Manager</p>
-                <p>Dedicated project manager ensuring all jobs are completed on time, within budget, and to the highest
-                    standards.</p>
+            <div class="services-grid">
+                <div class="service-card" data-aos="fade-up">
+                    <div class="service-icon">
+                        <i class="fas fa-th-large"></i>
+                    </div>
+                    <h3>Premium Tiling</h3>
+                    <p>Transform your space with expert tile installation. From ceramic to natural stone, we deliver perfection every time.</p>
+                    <div class="service-price">From R120/m²</div>
+                    <a href="#contact" class="service-link">Get Quote <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="service-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="service-icon">
+                        <i class="fas fa-faucet"></i>
+                    </div>
+                    <h3>Plumbing Services</h3>
+                    <p>Expert plumbing services including installations, repairs, and maintenance for residential and commercial properties.</p>
+                    <div class="service-price">Call for Quote</div>
+                    <a href="#contact" class="service-link">Get Quote <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="service-card" data-aos="fade-up" data-aos-delay="200">
+                    <div class="service-icon">
+                        <i class="fas fa-wood"></i>
+                    </div>
+                    <h3>Wooden Flooring</h3>
+                    <p>High-quality wooden flooring and vinyl installations. Durable, stylish options for any space with perfect finish.</p>
+                    <div class="service-price">From R180/m²</div>
+                    <a href="#contact" class="service-link">Get Quote <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="service-card" data-aos="fade-up" data-aos-delay="300">
+                    <div class="service-icon">
+                        <i class="fas fa-hammer"></i>
+                    </div>
+                    <h3>Building & Bricklaying</h3>
+                    <p>Professional bricklaying services for walls, foundations, and structures. Skilled craftsmanship for all projects.</p>
+                    <div class="service-price">Call for Quote</div>
+                    <a href="#contact" class="service-link">Get Quote <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="service-card" data-aos="fade-up" data-aos-delay="400">
+                    <div class="service-icon">
+                        <i class="fas fa-tools"></i>
+                    </div>
+                    <h3>Carpentry</h3>
+                    <p>Custom carpentry work including cabinets, shelving, and structural repairs. Expert woodwork for your home.</p>
+                    <div class="service-price">Custom Quote</div>
+                    <a href="#contact" class="service-link">Get Quote <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="service-card" data-aos="fade-up" data-aos-delay="500">
+                    <div class="service-icon">
+                        <i class="fas fa-paint-roller"></i>
+                    </div>
+                    <h3>Painting</h3>
+                    <p>Interior and exterior painting services with premium paints and techniques. Transform your space beautifully.</p>
+                    <div class="service-price">From R45/m²</div>
+                    <a href="#contact" class="service-link">Get Quote <i class="fas fa-arrow-right"></i></a>
+                </div>
             </div>
         </div>
     </section>
 
-    <section id="portfolio">
-        <h2>Our Portfolio</h2>
-        <div class="portfolio-container">
-            <div class="portfolio-item">
-                <img src="assets/img/tiling_work.jpeg" alt="Tiling Project">
-                <p>Kitchen Tiling Renovation</p>
-            </div>
-            <div class="portfolio-item">
-                <img src="assets/img/bathroom-plumbing.jpeg" alt="Plumbing Work">
-                <p>Bathroom Plumbing Installation</p>
-            </div>
-            <div class="portfolio-item">
-                <img src="assets/img/woodenfloor_work.jpeg" alt="Flooring">
-                <p>Wooden Flooring Installation</p>
-            </div>
-            <div class="portfolio-item">
-                <img src="assets/img/carpentry_work.jpeg" alt="Carpentry">
-                <p>Custom Carpentry Work</p>
-            </div>
-            <div class="portfolio-item">
-                <img src="assets/img/painting.webp" alt="Painting">
-                <p>Interior Painting Project</p>
-            </div>
-            <div class="portfolio-item">
-                <img src="assets/img/wall-building-london.jpg" alt="Bricklaying">
-                <p>Bricklaying for New Wall</p>
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="container">
+            <div class="about-grid">
+                <div class="about-content">
+                    <span class="section-badge">About Us</span>
+                    <h2 class="section-title">Our Story</h2>
+                    <p class="about-text">
+                        Founded in 2025, <strong>TSI Tiling and Patterns</strong> combines corporate experience to deliver the best possible quality work. Specializing in high-quality tiling, plumbing, and related services, what started as a small friendly business has grown into a trusted name in the community.
+                    </p>
+                    <p class="about-text">
+                        Our commitment to excellence and customer satisfaction has made us the go-to choice for homeowners and businesses in Pretoria and surrounding areas.
+                    </p>
+                    <div class="mission-box">
+                        <h3><i class="fas fa-bullseye"></i> Our Mission</h3>
+                        <p>To provide exceptional craftsmanship and reliable services that transform spaces and exceed our clients' expectations. We believe in building not just structures, but lasting relationships.</p>
+                    </div>
+                    <div class="features-list">
+                        <div class="feature">
+                            <i class="fas fa-check-circle"></i>
+                            <span><strong>5+ Years</strong> Combined Experience</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-check-circle"></i>
+                            <span><strong>Premium</strong> Materials</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-check-circle"></i>
+                            <span><strong>On-time</strong> Delivery</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-check-circle"></i>
+                            <span><strong>Fully</strong> Insured</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="about-images">
+                    <div class="about-image main-image">
+                        <img src="woodenfloor_work.jpeg" alt="TSI Tiling Work">
+                        <div class="experience-badge">
+                            <span class="exp-number">5+</span>
+                            <span class="exp-text">Years of<br>Excellence</span>
+                        </div>
+                    </div>
+                    <div class="about-image secondary-image">
+                        <img src="carpentry_work.jpeg" alt="Carpentry Work">
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 
-    <section id="weekly-updates">
-        <h2>Weekly Updates</h2>
-        <div class="carousel">
-            <img src="assets/img/tiling_project.webp" alt="Weekly Update: Kitchen Tiling">
-            <img src="assets/img/bathroom-plumbing.jpeg" alt="Weekly Update: Plumbing Repair">
-            <img src="assets/img/carpentry.webp" alt="Weekly Update: Flooring Installation">
-            <img src="assets/img/capntry_work.webp" alt="Weekly Update: Carpentry Work">
+    <!-- Team Section -->
+    <section id="team" class="team">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Our Team</span>
+                <h2 class="section-title">Meet The Experts</h2>
+                <p class="section-subtitle">Skilled professionals dedicated to delivering exceptional results</p>
+            </div>
+            <div class="team-grid">
+                <div class="team-card">
+                    <div class="team-image">
+                        <img src="Mr%20T.jpeg" alt="Thomas - Tiler">
+                        <div class="team-social">
+                            <a href="#"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#"><i class="fab fa-instagram"></i></a>
+                            <a href="#"><i class="fab fa-whatsapp"></i></a>
+                        </div>
+                    </div>
+                    <div class="team-info">
+                        <h3>Thomas</h3>
+                        <span class="team-role">Expert Tiler</span>
+                        <p>Years of experience in creating beautiful, durable tile installations for homes and businesses.</p>
+                    </div>
+                </div>
+                <div class="team-card">
+                    <div class="team-image">
+                        <img src="Joseph.jpeg" alt="Joseph - Plumber & Builder">
+                        <div class="team-social">
+                            <a href="#"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#"><i class="fab fa-instagram"></i></a>
+                            <a href="#"><i class="fab fa-whatsapp"></i></a>
+                        </div>
+                    </div>
+                    <div class="team-info">
+                        <h3>Joseph</h3>
+                        <span class="team-role">Plumber & Builder</span>
+                        <p>Expert in plumbing installations, repairs, and construction work for all projects.</p>
+                    </div>
+                </div>
+                <div class="team-card">
+                    <div class="team-image">
+                        <img src="Mathonsi.jpeg" alt="Mathonsi - Carpenter">
+                        <div class="team-social">
+                            <a href="#"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#"><i class="fab fa-instagram"></i></a>
+                            <a href="#"><i class="fab fa-whatsapp"></i></a>
+                        </div>
+                    </div>
+                    <div class="team-info">
+                        <h3>Mathonsi</h3>
+                        <span class="team-role">Expert Carpenter</span>
+                        <p>Skilled carpenter providing custom woodwork, repairs, and installations.</p>
+                    </div>
+                </div>
+                <div class="team-card">
+                    <div class="team-image">
+                        <img src="hero.jpeg" alt="Tsietsi Paile - Project Manager">
+                        <div class="team-social">
+                            <a href="#"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#"><i class="fab fa-instagram"></i></a>
+                            <a href="#"><i class="fab fa-whatsapp"></i></a>
+                        </div>
+                    </div>
+                    <div class="team-info">
+                        <h3>Tsietsi Paile</h3>
+                        <span class="team-role">Project Manager</span>
+                        <p>Dedicated to ensuring all jobs are completed on time, within budget, and to the highest standards.</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
-    <footer>
-        <div class="footer-content">
-            <!-- Company Info -->
-            <div class="footer-section">
-                <h3 style="margin-bottom: 1rem; margin-top: 0;">TSI Tiling and Patterns</h3>
-                <p style="margin-top: 1rem; font-size: 0.8rem; opacity: 0.8;">&copy; 2026 All rights reserved.</p>
-                <p style="margin: 0.5rem 0 0 0; font-size: 0.7rem; opacity: 0.6;">Designed by <a href="https://mplai.co.za" target="_blank" style="color: #ffffff; text-decoration: none; opacity: 0.8;">MPL AI</a></p>
+
+    <!-- Portfolio Section -->
+    <section id="portfolio" class="portfolio">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Portfolio</span>
+                <h2 class="section-title">Our Recent Work</h2>
+                <p class="section-subtitle">Browse through our completed projects and see the quality we deliver</p>
+            </div>
+            <div class="portfolio-grid">
+                <div class="portfolio-item large">
+                    <img src="woodenfloor_work.jpeg" alt="Wooden Flooring Installation">
+                    <div class="portfolio-overlay">
+                        <span class="portfolio-category">Flooring</span>
+                        <h3>Wooden Flooring Installation</h3>
+                        <a href="#" class="portfolio-link"><i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+                <div class="portfolio-item">
+                    <img src="carpentry_work.jpeg" alt="Custom Carpentry">
+                    <div class="portfolio-overlay">
+                        <span class="portfolio-category">Carpentry</span>
+                        <h3>Custom Cabinetry</h3>
+                        <a href="#" class="portfolio-link"><i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+                <div class="portfolio-item">
+                    <img src="woodenfloor_work.jpeg" alt="Bathroom Tiling">
+                    <div class="portfolio-overlay">
+                        <span class="portfolio-category">Tiling</span>
+                        <h3>Bathroom Renovation</h3>
+                        <a href="#" class="portfolio-link"><i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+                <div class="portfolio-item">
+                    <img src="carpentry_work.jpeg" alt="Kitchen Renovation">
+                    <div class="portfolio-overlay">
+                        <span class="portfolio-category">Kitchen</span>
+                        <h3>Kitchen Tiling</h3>
+                        <a href="#" class="portfolio-link"><i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+                <div class="portfolio-item large">
+                    <img src="woodenfloor_work.jpeg" alt="Full House Flooring">
+                    <div class="portfolio-overlay">
+                        <span class="portfolio-category">Flooring</span>
+                        <h3>Complete Home Flooring</h3>
+                        <a href="#" class="portfolio-link"><i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Weekly Updates Section -->
+    <section id="weekly-updates" class="weekly-updates">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Work Progress</span>
+                <h2 class="section-title">Weekly Updates</h2>
+                <p class="section-subtitle">Track our ongoing projects and latest work progress</p>
+            </div>
+            
+            <!-- Admin Panel (Hidden by default, shown with password) -->
+            <div class="admin-toggle">
+                <button id="adminToggleBtn" class="btn btn-outline btn-sm">
+                    <i class="fas fa-lock"></i> Admin Access
+                </button>
+            </div>
+            
+            <div id="adminPanel" class="admin-panel hidden">
+                <div class="admin-header">
+                    <h3><i class="fas fa-user-shield"></i> Add Weekly Update</h3>
+                    <button id="closeAdmin" class="btn-close"><i class="fas fa-times"></i></button>
+                </div>
+                <form id="updateForm" class="update-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="updateTitle">Project Title</label>
+                            <input type="text" id="updateTitle" placeholder="e.g., Kitchen Renovation - Phase 2" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="updateCategory">Category</label>
+                            <select id="updateCategory" required>
+                                <option value="tiling">Tiling</option>
+                                <option value="plumbing">Plumbing</option>
+                                <option value="flooring">Flooring</option>
+                                <option value="carpentry">Carpentry</option>
+                                <option value="building">Building</option>
+                                <option value="painting">Painting</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="updateDescription">Description</label>
+                        <textarea id="updateDescription" rows="3" placeholder="Describe the work completed this week..." required></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="updateProgress">Progress (%)</label>
+                            <input type="range" id="updateProgress" min="0" max="100" value="0">
+                            <span id="progressValue">0%</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="updateDate">Date</label>
+                            <input type="date" id="updateDate" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="updateImage">Image URL (optional)</label>
+                        <input type="text" id="updateImage" placeholder="Paste image URL or leave empty">
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Add Update
+                    </button>
+                </form>
             </div>
 
-            <!-- Contact Information -->
-            <div class="footer-section">
-                <h4 style="margin-bottom: 1rem; margin-top: 0;">Contact Info</h4>
+            <!-- Password Modal -->
+            <div id="passwordModal" class="modal hidden">
+                <div class="modal-content">
+                    <h3><i class="fas fa-lock"></i> Enter Admin Password</h3>
+                    <input type="password" id="adminPassword" placeholder="Enter password">
+                    <div class="modal-actions">
+                        <button id="cancelPassword" class="btn btn-outline">Cancel</button>
+                        <button id="submitPassword" class="btn btn-primary">Access</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Updates Container -->
+            <div id="updatesContainer" class="updates-container">
+                <!-- Updates will be loaded here by JavaScript -->
+            </div>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="empty-state hidden">
+                <i class="fas fa-clipboard-list"></i>
+                <h3>No Updates Yet</h3>
+                <p>Check back soon for weekly work progress updates!</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <div class="contact-grid">
                 <div class="contact-info">
-                    <p style="margin: 0.5rem 0;"><strong>Email:</strong></p>
-                    <p style="margin: 0 0 0.8rem 0;"><a href="mailto:info@tsi-tiling.com" style="color: #ecf0f1; text-decoration: none;">info@tsi-tiling.com</a></p>
+                    <span class="section-badge">Get In Touch</span>
+                    <h2 class="section-title">Let's Discuss Your Project</h2>
+                    <p class="contact-text">Ready to transform your space? Contact us for a free quote and consultation. We're here to help bring your vision to life.</p>
                     
-                    <p style="margin: 0.5rem 0;"><strong>Phone:</strong></p>
-                    <p style="margin: 0 0 0.8rem 0;"><a href="tel:+27123456789" style="color: #ecf0f1; text-decoration: none;">+27 (12) 345-6789</a></p>
-                    
-                    <p style="margin: 0.5rem 0;"><strong>Address:</strong></p>
-                    <p style="margin: 0 0 0.8rem 0; font-size: 0.9rem;">123 Tiling Street<br>Pretoria, South Africa 0001</p>
+                    <div class="contact-details">
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fas fa-phone-alt"></i>
+                            </div>
+                            <div class="contact-detail">
+                                <span class="label">Phone</span>
+                                <a href="tel:0655830779">065 583 0779</a>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div class="contact-detail">
+                                <span class="label">Email</span>
+                                <a href="mailto:info@tsi-tiling.com">info@tsi-tiling.com</a>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <div class="contact-detail">
+                                <span class="label">Location</span>
+                                <span>Pretoria, South Africa</span>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="contact-detail">
+                                <span class="label">Working Hours</span>
+                                <span>Mon - Sat: 8:00 AM - 6:00 PM</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="social-links">
+                        <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-tiktok"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </div>
+
+                <div class="contact-form-wrapper">
+                    <form id="contactForm" class="contact-form">
+                        <h3>Request a Quote</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="name">Your Name</label>
+                                <input type="text" id="name" placeholder="John Doe" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="phone">Phone Number</label>
+                                <input type="tel" id="phone" placeholder="065 583 0779" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input type="email" id="email" placeholder="john@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="service">Service Needed</label>
+                            <select id="service" required>
+                                <option value="">Select a service</option>
+                                <option value="tiling">Tiling</option>
+                                <option value="plumbing">Plumbing</option>
+                                <option value="flooring">Wooden Flooring</option>
+                                <option value="building">Building/Bricklaying</option>
+                                <option value="carpentry">Carpentry</option>
+                                <option value="painting">Painting</option>
+                                <option value="multiple">Multiple Services</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Project Details</label>
+                            <textarea id="message" rows="4" placeholder="Tell us about your project..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-lg btn-full">
+                            <i class="fas fa-paper-plane"></i> Send Request
+                        </button>
+                    </form>
                 </div>
             </div>
+        </div>
+    </section>
 
-            <!-- Staff -->
-            <div class="footer-section">
-                <h4 style="margin-bottom: 1rem; margin-top: 0;">Team</h4>
-                <div class="staff-list">
-                    <p style="margin: 0.5rem 0;"><strong>Manager:</strong> John Smith</p>
-                    <p style="margin: 0.5rem 0;"><strong>Lead Installer:</strong> David Johnson</p>
-                    <p style="margin: 0.5rem 0;"><strong>Designer:</strong> Sarah Williams</p>
-                    <p style="margin: 0.5rem 0;"><strong>Support:</strong> contact@tsi-tiling.com</p>
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="#home" class="logo">
+                        <span class="logo-icon"><i class="fas fa-hard-hat"></i></span>
+                        <span class="logo-text">TSI<span class="logo-accent"> Tiling</span></span>
+                    </a>
+                    <p>Premium tiling, plumbing, carpentry, and building services in Pretoria. Quality craftsmanship with lifetime warranties.</p>
+                    <div class="footer-social">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-tiktok"></i></a>
+                        <a href="#"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#services">Services</a></li>
+                        <li><a href="#about">About Us</a></li>
+                        <li><a href="#portfolio">Portfolio</a></li>
+                        <li><a href="#weekly-updates">Weekly Updates</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Services</h4>
+                    <ul>
+                        <li><a href="#services">Tiling</a></li>
+                        <li><a href="#services">Plumbing</a></li>
+                        <li><a href="#services">Wooden Flooring</a></li>
+                        <li><a href="#services">Building</a></li>
+                        <li><a href="#services">Carpentry</a></li>
+                        <li><a href="#services">Painting</a></li>
+                    </ul>
+                </div>
+                <div class="footer-contact">
+                    <h4>Contact Info</h4>
+                    <ul>
+                        <li><i class="fas fa-phone"></i> 065 583 0779</li>
+                        <li><i class="fas fa-envelope"></i> info@tsi-tiling.com</li>
+                        <li><i class="fas fa-map-marker-alt"></i> Pretoria, South Africa</li>
+                    </ul>
                 </div>
             </div>
-
-            <!-- Social Links -->
-            <div class="footer-section">
-                <h4 style="margin-bottom: 1rem; margin-top: 0;">Follow Us</h4>
-                <div class="social-links">
-                    <a href="#" aria-label="Facebook">Facebook</a>
-                    <a href="#" aria-label="Instagram">Instagram</a>
-                    <a href="#" aria-label="TikTok">TikTok</a>
-                </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 TSI Tiling and Patterns. All rights reserved.</p>
+                <p class="credit">Designed with <i class="fas fa-heart"></i> <a href="http://www.mplai.co.za" target="_blank" rel="noopener noreferrer">MPL AI</a></p>
             </div>
         </div>
     </footer>
 
-    <script>
-        console.log('TSI Tiling and Patterns website loaded.');
+    <!-- Toast Notification -->
+    <div id="toast" class="toast hidden">
+        <i class="fas fa-check-circle"></i>
+        <span id="toastMessage">Message sent successfully!</span>
+    </div>
 
-        // Hamburger menu functionality
-        document.addEventListener('DOMContentLoaded', function () {
-            const hamburger = document.getElementById('hamburger');
-            const mobileMenu = document.getElementById('mobileMenu');
-            const menuOverlay = document.getElementById('menuOverlay');
-            const header = document.querySelector('header');
-            const body = document.body;
+    <!-- Scroll to Top Button -->
+    <button id="scrollTop" class="scroll-top hidden">
+        <i class="fas fa-arrow-up"></i>
+    </button>
 
-            // Toggle mobile menu
-            function toggleMenu() {
-                const isActive = hamburger.classList.contains('active');
-
-                if (isActive) {
-                    // Close menu
-                    hamburger.classList.remove('active');
-                    mobileMenu.classList.remove('active');
-                    menuOverlay.classList.remove('active');
-                    body.classList.remove('menu-open');
-                } else {
-                    // Open menu
-                    hamburger.classList.add('active');
-                    mobileMenu.classList.add('active');
-                    menuOverlay.classList.add('active');
-                    body.classList.add('menu-open');
-                }
-            }
-
-            hamburger.addEventListener('click', toggleMenu);
-
-            // Close menu when clicking overlay
-            menuOverlay.addEventListener('click', toggleMenu);
-
-            // Close mobile menu when clicking on a link
-            mobileMenu.addEventListener('click', function (e) {
-                if (e.target.tagName === 'A') {
-                    // Small delay to allow the browser to navigate first
-                    setTimeout(() => {
-                        toggleMenu();
-                    }, 100);
-                }
-            });
-
-            // Close menu on escape key
-            document.addEventListener('keydown', function (e) {
-                if (e.key === 'Escape' && hamburger.classList.contains('active')) {
-                    toggleMenu();
-                }
-            });
-
-            // Add scroll effect to header
-            let lastScrollTop = 0;
-            window.addEventListener('scroll', function () {
-                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-
-                if (scrollTop > 50) {
-                    header.classList.add('scrolled');
-                } else {
-                    header.classList.remove('scrolled');
-                }
-
-                lastScrollTop = scrollTop;
-            });
-
-            // Smooth scroll for anchor links
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    const target = document.querySelector(this.getAttribute('href'));
-                    if (target) {
-                        const offsetTop = target.offsetTop - 80; // Account for fixed header
-                        window.scrollTo({
-                            top: offsetTop,
-                            behavior: 'smooth'
-                        });
-                    }
-                });
-            });
-        });
-    </script>
+    <script src="script.js"></script>
 </body>
-
 </html>
